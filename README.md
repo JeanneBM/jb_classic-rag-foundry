@@ -127,6 +127,7 @@ print(response.output_text)
 ├── .env.example
 ├── create_rag_agent.py   # creates the agent
 ├── chat.py               # sample conversation
+├── requirements.txt
 ├── README.md
 ├── GITHUB_ACTIONS.md
 └── .github/
