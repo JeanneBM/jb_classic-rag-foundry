@@ -1,38 +1,65 @@
+"""Create or update the Azure Foundry RAG agent with Knowledge Base MCP tool."""
+
+from __future__ import annotations
+
 import os
-from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
+import sys
+
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool
+from azure.ai.projects.models import MCPTool, PromptAgentDefinition
+from azure.identity import DefaultAzureCredential
+from dotenv import load_dotenv
 
 load_dotenv()
 
-PROJECT_ENDPOINT = os.environ["PROJECT_ENDPOINT"]
-RAG_MCP_ENDPOINT = os.environ["RAG_MCP_ENDPOINT"]
-PROJECT_CONNECTION_NAME = os.environ["PROJECT_CONNECTION_NAME"]
-AGENT_NAME = os.environ.get("AGENT_NAME", "RagAgent")
-MODEL_DEPLOYMENT = os.environ.get("MODEL_DEPLOYMENT", "gpt-4.1-mini")
+REQUIRED_ENV = (
+    "PROJECT_ENDPOINT",
+    "RAG_MCP_ENDPOINT",
+    "PROJECT_CONNECTION_NAME",
+)
+
+
+def _require_env() -> dict[str, str]:
+    missing = [key for key in REQUIRED_ENV if not os.getenv(key)]
+    if missing:
+        print(
+            "Missing required environment variables:\n  - "
+            + "\n  - ".join(missing)
+            + "\n\nCopy .env.example to .env and fill in the values.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    return {
+        "project_endpoint": os.environ["PROJECT_ENDPOINT"],
+        "rag_mcp_endpoint": os.environ["RAG_MCP_ENDPOINT"],
+        "project_connection_name": os.environ["PROJECT_CONNECTION_NAME"],
+        "agent_name": os.environ.get("AGENT_NAME", "RagAgent"),
+        "model_deployment": os.environ.get("MODEL_DEPLOYMENT", "gpt-4.1-mini"),
+    }
 
 
 def main() -> None:
+    cfg = _require_env()
+
     credential = DefaultAzureCredential()
     project = AIProjectClient(
-        endpoint=PROJECT_ENDPOINT,
+        endpoint=cfg["project_endpoint"],
         credential=credential,
     )
 
-    # MCP tool pointing to the Knowledge Base (classic RAG)
     mcp_tool = MCPTool(
         server_label="KnowledgeBase",
-        server_url=RAG_MCP_ENDPOINT,
+        server_url=cfg["rag_mcp_endpoint"],
         require_approval="never",
         allowed_tools=["knowledge_base_retrieve"],
-        project_connection_id=PROJECT_CONNECTION_NAME,
+        project_connection_id=cfg["project_connection_name"],
     )
 
     agent = project.agents.create_version(
-        agent_name=AGENT_NAME,
+        agent_name=cfg["agent_name"],
         definition=PromptAgentDefinition(
-            model=MODEL_DEPLOYMENT,
+            model=cfg["model_deployment"],
             instructions=(
                 "You are a helpful assistant that answers questions using only "
                 "the connected knowledge base.\n"
