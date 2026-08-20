@@ -59,7 +59,7 @@ Zanim uruchomisz cokolwiek z tego projektu, musisz mieć gotową **Knowledge Bas
    - lub inny obsługiwany connector danych
 3. Skonfiguruj wzbogacanie danych (skillset) — chunking, ekstrakcja tekstu, embeddingi — Azure AI Search robi to automatycznie po stronie usługi.
 4. Poczekaj, aż indeksowanie się zakończy i baza wiedzy będzie gotowa do zapytań.
-5. Zapisz sobie:
+5. Zapisz:
    - nazwę usługi Search (`<search-service>`)
    - nazwę Knowledge Base (`<kb-name>`)
 
