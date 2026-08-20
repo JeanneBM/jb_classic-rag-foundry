@@ -190,8 +190,6 @@ Wymaga to jednorazowej konfiguracji:
 
 Workflow ma dwa etapy: `lint` (Ruff) na każdym push/PR, oraz `deploy-agent` (uruchamia `create_rag_agent.py`) tylko na branchu `main`, z opcjonalną ochroną środowiska `production` (wymagani recenzenci).
 
-Pełna instrukcja krok po kroku, w tym dokładne komendy `az` i troubleshooting dla OIDC, znajduje się w **[GITHUB_ACTIONS.md](./GITHUB_ACTIONS.md)**.
-
 > To jest krok opcjonalny — do zwykłego, lokalnego uruchomienia agenta (Kroki 1–7 powyżej) nie jest potrzebny.
 
 ---
