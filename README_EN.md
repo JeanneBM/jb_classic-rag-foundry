@@ -189,8 +189,6 @@ This requires a one-time setup:
 
 The workflow has two stages: `lint` (Ruff) on every push/PR, and `deploy-agent` (runs `create_rag_agent.py`) only on the `main` branch, with optional `production` environment protection (required reviewers).
 
-Full step-by-step instructions, including exact `az` commands and OIDC troubleshooting, are in **[GITHUB_ACTIONS.md](./GITHUB_ACTIONS.md)**.
-
 > This step is optional — it is not needed for local usage (Steps 1–7 above).
 
 ---
