@@ -1,66 +1,54 @@
-name: CI - Azure Foundry RAG Agent
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
-
-permissions:
-  id-token: write   # Required for OIDC
-  contents: read
-
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Lint with Ruff
-        run: ruff check .
-
-  deploy-agent:
-    needs: lint
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    environment: production   # Optional: add required reviewers in GitHub Environments
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Azure Login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Create / Update RAG Agent
-        env:
-          PROJECT_ENDPOINT: ${{ secrets.PROJECT_ENDPOINT }}
-          RAG_MCP_ENDPOINT: ${{ secrets.RAG_MCP_ENDPOINT }}
-          PROJECT_CONNECTION_NAME: ${{ secrets.PROJECT_CONNECTION_NAME }}
-          AGENT_NAME: RagAgent
-          MODEL_DEPLOYMENT: gpt-4.1-mini
-        run: python create_rag_agent.py
+# name: CI - Azure Foundry RAG Agent
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
+#   workflow_dispatch:
+# permissions:
+#   id-token: write # Required for OIDC
+#   contents: read
+# jobs:
+#   lint:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.12"
+#           cache: "pip"
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
+#       - name: Lint with Ruff
+#         run: ruff check .
+#   deploy-agent:
+#     needs: lint
+#     runs-on: ubuntu-latest
+#     if: github.ref == 'refs/heads/main'
+#     environment: production # Optional: add required reviewers in GitHub Environments
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Azure Login (OIDC)
+#         uses: azure/login@v2
+#         with:
+#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.12"
+#       - name: Install dependencies
+#         run: |
+#           pip install -r requirements.txt
+#       - name: Create / Update RAG Agent
+#         env:
+#           PROJECT_ENDPOINT: ${{ secrets.PROJECT_ENDPOINT }}
+#           RAG_MCP_ENDPOINT: ${{ secrets.RAG_MCP_ENDPOINT }}
+#           PROJECT_CONNECTION_NAME: ${{ secrets.PROJECT_CONNECTION_NAME }}
+#           AGENT_NAME: RagAgent
+#           MODEL_DEPLOYMENT: gpt-4.1-mini
+#         run: python create_rag_agent.py
