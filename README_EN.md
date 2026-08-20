@@ -26,6 +26,17 @@ Agent's answer with source citations
 
 **Important:** this repository only handles the agent and query layer. **It does not create or populate the knowledge base** — that needs to be prepared beforehand in Azure AI Search (see Step 1 below).
 
+
+## What to expect (and its limitations)
+
+In short: **yes, you can upload any documents to the Knowledge Base and ask any questions** — the agent will answer based on the content you upload, not from the model's general knowledge. If something isn't in the knowledge base, it should reply "I don't know" instead of making things up.
+
+That said, it's worth understanding a few nuances so you don't get surprised by the quality of the answers:
+
+- **Any question ≠ always an accurate answer.** Answer quality depends on whether the retrieval step (hybrid/vector search + semantic reranking) actually finds matching fragments. If your question uses very different wording than the documents, results may be weaker.
+- **Documents are split into chunks before indexing.** If an answer requires combining information scattered across multiple parts of a document, the model may miss it, since it only sees selected chunks, not the whole document at once.
+- **This is not 100% hallucination-proof.** The agent's instructions *ask* the model to stick to the sources and say "I don't know" when data is missing — that's prompt engineering, not a hard technical guarantee. A well-configured RAG setup significantly reduces the risk of making things up, but doesn't eliminate it entirely.
+- **The topical scope is limited by the agent's own system prompt** (in `create_rag_agent.py`) — if you ask about something completely unrelated to the knowledge base content (e.g. general knowledge outside the documents), the agent should say "I don't know" rather than answer from the model's own knowledge.
 ---
 
 ## Prerequisites
