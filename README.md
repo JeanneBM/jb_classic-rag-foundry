@@ -25,7 +25,7 @@ Odpowiedź agenta z cytowaniami źródeł
 ```
 
 **Ważne:** to repozytorium obsługuje tylko warstwę agenta i zapytań. **Nie tworzy ani nie zapełnia bazy wiedzy** — tę trzeba przygotować wcześniej w Azure AI Search (patrz krok 1 poniżej).
----
+
 
 ## Czego się spodziewać (i jakie są ograniczenia)
 
