@@ -25,6 +25,18 @@ Odpowiedź agenta z cytowaniami źródeł
 ```
 
 **Ważne:** to repozytorium obsługuje tylko warstwę agenta i zapytań. **Nie tworzy ani nie zapełnia bazy wiedzy** — tę trzeba przygotować wcześniej w Azure AI Search (patrz krok 1 poniżej).
+---
+
+## Czego się spodziewać (i jakie są ograniczenia)
+
+W skrócie: **tak, możesz wrzucić dowolne dokumenty do Knowledge Base i zadawać dowolne pytania** — agent odpowie na podstawie treści, które tam wrzucisz, a nie z ogólnej wiedzy modelu. Jeśli czegoś nie ma w bazie, powinien odpowiedzieć "I don't know" zamiast zmyślać.
+
+Warto jednak rozumieć kilka niuansów, żeby nie zawieść się na jakości odpowiedzi:
+
+- **Dowolne pytanie ≠ zawsze trafna odpowiedź.** Jakość odpowiedzi zależy od tego, czy wyszukiwarka (hybrid/vector search + semantic reranking) trafnie znajdzie pasujące fragmenty. Jeśli sformułujesz pytanie zupełnie innym słownictwem niż to w dokumentach, wynik może być gorszy.
+- **Dokumenty są dzielone na fragmenty (chunking) przed indeksowaniem.** Jeśli odpowiedź wymaga połączenia informacji rozproszonych w wielu miejscach dokumentu, model może tego nie uchwycić, bo widzi tylko wybrane fragmenty, a nie cały dokument naraz.
+- **To nie jest 100% odporne na halucynacje.** Instrukcje agenta *proszą* model, żeby trzymał się źródeł i odpowiadał "nie wiem" przy braku danych — to prompt engineering, nie twardy techniczny gwarant. Dobrze skonfigurowany RAG znacząco redukuje ryzyko zmyślania, ale go nie eliminuje całkowicie.
+- **Zakres tematyczny jest ograniczony przez sam prompt systemowy agenta** (w `create_rag_agent.py`) — jeśli zapytasz o coś kompletnie niezwiązanego z treścią bazy (np. ogólną wiedzę spoza dokumentów), agent powinien odpowiedzieć "nie wiem", a nie odpowiadać z wiedzy modelu.
 
 ---
 
